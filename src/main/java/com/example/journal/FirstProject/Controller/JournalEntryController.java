@@ -145,23 +145,26 @@ public class JournalEntryController
     public ResponseEntity<?> deleteById(@PathVariable ObjectId id,@PathVariable String username)
     {
 
-        Optional<JournalEntry> journalEntry=journalEntryService.findById(id);
-        if(journalEntry.isPresent())
-        {
-            journalEntryService.deleteId(id,username);
-            Optional<JournalEntry> deletedEntryCheck = journalEntryService.findById(id);
-            if (!deletedEntryCheck.isPresent()) 
-            {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } 
-            else
-            {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
+            
+            if (journalEntry.isPresent()) {
+                journalEntryService.deleteId(id, username);
+                
+                Optional<JournalEntry> deletedEntryCheck = journalEntryService.findById(id);
+                if (!deletedEntryCheck.isPresent()) {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-        }
-        else
-        {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } 
+        catch (Exception e) 
+        { 
+            e.printStackTrace(); 
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

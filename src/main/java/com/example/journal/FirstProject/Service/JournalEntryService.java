@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.journal.FirstProject.Repository.JournalEntryRepository;
 
@@ -45,14 +46,26 @@ public class JournalEntryService
         return journalEntryRepo.findAll();
     }
 
+    @Transactional
     public void deleteId(ObjectId id, String username)
     {
         Optional<User> u=userService.findByUsername(username);
         User user=u.get();
-        user.getJournalEntries().removeIf(x->x.getId().equals(id));
-        userService.saveUser(user);
-        journalEntryRepo.deleteById(id);        
+
+        if(u.isPresent())
+        {
+            user.getJournalEntries().removeIf(x->x.getId().equals(id));
+            userService.saveUser(user);
+            journalEntryRepo.deleteById(id);
+        }
+        else
+        {
+            throw new RuntimeException("USER NOT FOUND");
+        }
+        
     }
+    
+    @Transactional
     public void saveEntry(JournalEntry myEntry, String username) 
     {
        
@@ -63,6 +76,7 @@ public class JournalEntryService
             myEntry.setDate(LocalDateTime.now());
             JournalEntry saved=journalEntryRepo.save(myEntry);
             user.getJournalEntries().add(saved);
+         
             userService.saveUser(user);
 
        }

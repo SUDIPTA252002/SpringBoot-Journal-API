@@ -9,10 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,10 +46,11 @@ public class UserController
         }
     }
 
-    @GetMapping(path="/username/{username}")
-    public ResponseEntity<User> getById(@PathVariable String username)
+    @GetMapping(path="/fetch")
+    public ResponseEntity<User> getById()
     {
-        Optional<User> user=userService.findByUsername(username);
+        Authentication authenctication=SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user=userService.findByUsername(authenctication.getName());
         if(user.isPresent())
         {
             return new ResponseEntity<>(user.get(),HttpStatus.OK);
@@ -73,29 +76,13 @@ public class UserController
         }
     }
 
-
-
-
-
-     @PostMapping(path="/create")
-    public ResponseEntity<?> creatEntry(@RequestBody User user)
-    {
-        try
-        {   
-            userService.saveUser(user);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-
-        }
-        catch(Exception e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }         
-    }
     
 
-    @PutMapping("/{username}")
-    public ResponseEntity<User> updateJournal(@PathVariable String username,@RequestBody User newUser)
+    @PutMapping("/update")
+    public ResponseEntity<User> updateJournal(@RequestBody User newUser)
     {
+        Authentication autehnctication=SecurityContextHolder.getContext().getAuthentication();
+        String username=autehnctication.getName();
         Optional<User> user=userService.findByUsername(username);
         User old=user.get();
         if(user.isPresent())
@@ -118,13 +105,15 @@ public class UserController
 
 
 
-      @DeleteMapping(path="/id/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable ObjectId id)
+    @DeleteMapping(path="/delete")
+    public ResponseEntity<?> deleteById()
     {
-
-        Optional<User> user=userService.getById(id);
+        Authentication authenctication=SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> u=userService.findByUsername(authenctication.getName());
+        Optional<User> user=userService.getById(u.get().getUserID());
         if(user.isPresent())
         {
+            ObjectId id=user.get().getUserID();
             userService.deleteById(id);
             Optional<User> deletedEntryCheck = userService.getById(id);
             if (!deletedEntryCheck.isPresent()) 
