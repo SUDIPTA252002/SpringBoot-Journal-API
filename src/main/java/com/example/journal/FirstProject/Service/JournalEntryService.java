@@ -54,9 +54,13 @@ public class JournalEntryService
 
         if(u.isPresent())
         {
-            user.getJournalEntries().removeIf(x->x.getId().equals(id));
-            userService.saveUser(user);
-            journalEntryRepo.deleteById(id);
+            boolean remove=user.getJournalEntries().removeIf(x->x.getId().equals(id));
+            
+            if(remove)
+            {
+                userService.saveUser(user);
+                journalEntryRepo.deleteById(id);
+            }
         }
         else
         {
@@ -85,6 +89,21 @@ public class JournalEntryService
             throw new RuntimeException("Username not found");
        }
        
+    }
+
+
+    public List<JournalEntry> getByUsername(String username)
+    {
+        Optional<User> u=userService.findByUsername(username);
+        if(u.isPresent())
+        {
+            User user=u.get();
+            return user.getJournalEntries();
+        }
+        else
+        {
+            throw new RuntimeException("Usrname Not Found");
+        }
     }
     
 }

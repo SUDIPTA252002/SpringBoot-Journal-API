@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,11 @@ public class UserController
     @Autowired
     private UserService userService;
 
-    @GetMapping(path="/id/{id}")
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    @GetMapping(path="/fetch/{id}")
     public ResponseEntity<User> getById(@PathVariable ObjectId id)
     {
         Optional<User> user=userService.getById(id);
@@ -45,6 +50,7 @@ public class UserController
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     @GetMapping(path="/fetch")
     public ResponseEntity<User> getById()
@@ -61,6 +67,7 @@ public class UserController
         }
     }
 
+
     @GetMapping(path="/all")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0")int page,@RequestParam(defaultValue = "10")int size)
     {
@@ -75,7 +82,6 @@ public class UserController
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
     
 
     @PutMapping("/update")
@@ -91,7 +97,7 @@ public class UserController
                                         newUser.getUsername():old.getUsername());
 
             old.setPassword(newUser.getPassword()!=null&&!newUser.getPassword().equals("")?
-                                        newUser.getPassword():old.getPassword());
+                                        passwordEncoder.encode(newUser.getPassword()):old.getPassword());
 
             userService.saveUser(old);
             return new ResponseEntity<>(old,HttpStatus.OK);
@@ -101,8 +107,6 @@ public class UserController
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
 
 
     @DeleteMapping(path="/delete")

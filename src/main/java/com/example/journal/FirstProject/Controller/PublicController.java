@@ -23,7 +23,7 @@ public class PublicController
     {
         try
         {   
-            userService.saveUser(user);
+            userService.saveNewUser(user);
             return new ResponseEntity<>(HttpStatus.CREATED);
 
         }

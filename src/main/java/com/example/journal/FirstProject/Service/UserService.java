@@ -33,10 +33,15 @@ public class UserService
         return userRepo.findAll(pageable);
     }
 
-    public void saveUser(User user)
+    public void saveNewUser(User user)
     {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Arrays.asList("USER"));
+        userRepo.save(user);
+    }
+
+    public void saveUser(User user)
+    {
         userRepo.save(user);
     }
 
