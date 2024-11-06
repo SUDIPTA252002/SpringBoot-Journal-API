@@ -33,7 +33,7 @@ public class SpringSecurity
     public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception
     {
         http
-            .authorizeHttpRequests((auths)->auths
+            .authorizeHttpRequests(auths->auths
                                             .requestMatchers("/journal/**","/user/**").authenticated()
                                             .requestMatchers("/admin/**").hasRole("ADMIN")
                                             .requestMatchers("/public/**").permitAll()

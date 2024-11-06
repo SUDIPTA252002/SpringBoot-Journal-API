@@ -1,0 +1,4 @@
+2024-11-06 10:04:04 INFO  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsServiceImpl
+2024-11-06 10:04:08 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-11-06 10:04:08 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-11-06 10:04:08 INFO  [main] c.e.j.F.FirstProjectApplication - Started FirstProjectApplication in 63.129 seconds (process running for 66.592)
