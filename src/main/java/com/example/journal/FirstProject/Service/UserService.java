@@ -40,6 +40,15 @@ public class UserService
         userRepo.save(user);
     }
 
+
+    public void saveUserAdmin(User user)
+    {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("USER","ADMIN"));
+        userRepo.save(user);
+    }
+
+
     public void saveUser(User user)
     {
         userRepo.save(user);
